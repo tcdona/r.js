@@ -208,7 +208,9 @@ define(function (require) {
             destPath, moduleMap, parentModuleMap, context,
             resources, resource, plugin, fileContents,
             pluginProcessed = {},
-            buildFileContents = "",
+            //addisonxue hack
+            //buildFileContents = "",
+            buildFileContents = new Date().toString() + '\n',
             pluginCollector = {};
 
         return prim().start(function () {
@@ -591,7 +593,13 @@ define(function (require) {
                         }
 
                         if (moduleIndex > -1 || !config.skipDirOptimize) {
-                            optimize.jsFile(fileName, fileContents, fileName, cfg, pluginCollector);
+                            //optimize.jsFile(fileName, fileContents, fileName, cfg, pluginCollector);
+                        	//addisonxue hack
+                        	if(moduleIndex > -1){
+                        		optimize.jsFile(fileName, fileContents, fileName, cfg, pluginCollector);
+                        	}else{
+                        		optimize.jsFile(fileName, addDebugInfo(fileContents, fileName), fileName, cfg, pluginCollector);
+                        	}
                         }
                     }
                 });
@@ -1655,6 +1663,9 @@ define(function (require) {
                                     return require._cacheReadAsync(path);
                                 }
                             }).then(function (text) {
+                            	//addisonxue hack
+                            	text = addDebugInfo(text, moduleName);
+                            	
                                 var hasPackageName;
 
                                 currContents = text;
@@ -1827,3 +1838,18 @@ define(function (require) {
 
     return build;
 });
+
+
+function addDebugInfo(s, fileName) {
+	var reg = /Logger\.(info|warn|debug|error)\(/g;
+	var s2 = [], lastIndex = 0;
+	while (reg.exec(s) != null){
+		s2.push(s.substring(lastIndex ,reg.lastIndex))
+		s2.push('"FILENAME:' + (fileName) + '",')
+		var c = s.substring(0, reg.lastIndex).match(/\r\n/g);
+		s2.push('"LINENO:' + ((c || []).length + 1) + '",')
+		lastIndex = reg.lastIndex;
+	}
+	s2.push(s.substring(lastIndex,s.length))
+	return s2.join('');
+}
