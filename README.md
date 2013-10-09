@@ -1,3 +1,7 @@
+# r.js修改版
+* 添加了打包时候的build.txt增加打包时间的输出
+* 在build.js中加入对于log语句，自动加入合并前文件的文件名和代码行数支持
+
 # r.js
 
 A command line tool for running JavaScript scripts that use the
