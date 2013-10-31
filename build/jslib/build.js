@@ -598,7 +598,7 @@ define(function (require) {
                         	if(moduleIndex > -1){
                         		optimize.jsFile(fileName, fileContents, fileName, cfg, pluginCollector);
                         	}else{
-                        		optimize.jsFile(fileName, addDebugInfo(fileContents, fileName), fileName, cfg, pluginCollector);
+                        		optimize.jsFile(fileName, addDebugInfo(fileContents, moduleName), fileName, cfg, pluginCollector);
                         	}
                         }
                     }
